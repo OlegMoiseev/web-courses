@@ -1,11 +1,28 @@
+
+
 function startTimer() {
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://localhost:8080/getlot', false);
+    xhr.send();
+    alert(xhr.responseText);
+
+
     var currentTimer = document.getElementById("time").innerHTML;
     var arr = currentTimer.split(':');
     var minutes = arr[0];
     var seconds = arr[1];
     if (minutes == 0 && seconds == 0) {
+
         alert("Time left!");
-        seconds = 5;
+        document.getElementById("repl").innerHTML = '<button id="simpleButton"\n' +
+                                '                    type="button"\n' +
+                                '                    class="btn btn-primary disabled"\n' +
+                                '                    \n' +
+                                        '            >\n' +
+                                        '                Hello\n' +
+                                        '            </button>';
+        return;
     }
     document.getElementById("time").innerHTML = formatTime(minutes) + ':' + formatTime((seconds - 1));
     setTimeout(startTimer, 1000);
@@ -27,11 +44,16 @@ btn1.onclick = function clickButton() {
     var currentTimer = document.getElementById("time").innerHTML;
     var arr = currentTimer.split(':');
     var minutes = arr[0];
-
     var seconds = arr[1];
-    seconds = 14;
-    document.getElementById("time").innerHTML = formatTime(minutes) + ':' + formatTime((seconds - 1));
-    alert("Hello pressed");
+    if (seconds == 0) {
+
+    }
+    else {
+        seconds = 14;
+        document.getElementById("time").innerHTML = formatTime(minutes) + ':' + formatTime((seconds - 1));
+        alert("Hello pressed");
+    }
+
 }
 
 
@@ -46,3 +68,7 @@ const rxSeconds = 15;
 Rx.Observable.timer(100, 1000)
     .map(i => rxSeconds - i).take(rxSeconds + 1)
     .subscribe(i => document.getElementById("rxTime").innerHTML = formatTime(i));
+
+
+
+
