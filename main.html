@@ -9,22 +9,41 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <script src="https://npmcdn.com/@reactivex/rxjs@5.0.0-beta.6/dist/global/Rx.umd.js"></script>
+
+
+    <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+    <script>
+
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('d547e509337308641aae', {
+            cluster: 'eu',
+            forceTLS: true
+        });
+
+        var channel = pusher.subscribe('my-channel');
+        channel.bind('my-event', function(data) {
+            alert(JSON.stringify(data));
+        });
+    </script>
 </head>
 <body>
     <div class="body">
         <h1>
             This is a new LOT
         </h1>
+        <p>
+            Try publishing an event to channel <code>my-channel</code>
+            with event name <code>my-event</code>.
+        </p>
 
-        <div id="repl">
-            <button id="simpleButton"
-                    type="button"
-                    class="btn btn-primary"
-
-            >
-                Hello
-            </button>
-        </div>
+        <button id="simpleButton"
+                type="button"
+                class="btn btn-primary"
+        >
+            Hello
+        </button>
 
         <button id="rxButton"
                 type="button"
