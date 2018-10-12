@@ -1,3 +1,5 @@
+const ip = 'https://7bb08d21.ngrok.io';
+
 function formatTime(time) {
     time = Number.parseInt(time);
     if (time < 10) {
@@ -8,44 +10,43 @@ function formatTime(time) {
     }
 }
 
-const btn1 = document.getElementById("simpleButton");
-
-btn1.onclick = function clickButton() {
-    let time = getTime();
-    const minutes = time[0];
-    let seconds = time[1];
-    if (seconds > 0) {
-        seconds = 10;
-        setTime(minutes, seconds);
-        alert("Hello pressed");
-    }
-};
-
 function getLot() {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:8080/', true);
+    xhr.open('GET', ip + '/getlot', true);
     xhr.onload = function () {
-        var lot = JSON.parse(xhr.responseText);
-        document.getElementById("lotName").innerHTML = lot.name;
-        document.getElementById("lotPrice").innerHTML = lot.price + '$';
-        document.getElementById("lotDescription").innerHTML = lot.description;
+        const lot = JSON.parse(xhr.responseText);
+        updateLotInfo(lot);
         setTime(lot.seconds);
     };
     xhr.onerror = function () {
         console.log("Some error occurred - msg from onerror func");
     };
     xhr.send();
+}
 
-    document.getElementById("lotImage").innerHTML = "<img src='https://clipart-db.ru/file_content/rastr/volkswagen_017.png' width='450px'>";
+function updateLotInfo(lot) {
+    document.getElementById("lotName").innerHTML = lot.name;
+    document.getElementById("lotPrice").innerHTML = lot.price + '$';
+    document.getElementById("lotDescription").innerHTML = lot.description;
+    document.getElementById("stepSize").innerHTML = 'Step: ' + lot.step;
+    document.getElementById("lotImage").innerHTML = "<img src='" + lot.image + "' width='450px'>";
+}
+
+function increaseBid() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("POST", ip + '/increase', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send();
 }
 
 function setTime(time){
     time = parseInt(time);
     var minutes = time / 60;
     var seconds = time % 60;
-
     document.getElementById("time").innerHTML = formatTime(minutes) + ':' + formatTime(seconds);
 }
+
 // Enable pusher logging - don't include this in production
 Pusher.logToConsole = true;
 
@@ -61,10 +62,11 @@ channel.bind('time-update-event', function(time) {
 });
 
 channel.bind('get-lot-event', function(lot) {
-    document.getElementById("lotName").innerHTML = lot.name;
-    document.getElementById("lotPrice").innerHTML = lot.price + '$';
-    document.getElementById("lotDescription").innerHTML = lot.description;
-    //document.getElementById("lotImage").innerHTML = "<img src='https://clipart-db.ru/file_content/rastr/volkswagen_017.png' width='450px'>";
+    updateLotInfo(lot);
+});
+
+channel.bind('price-update-event', function(price) {
+    document.getElementById("lotPrice").innerHTML = price + '$';
 });
 
 getLot();

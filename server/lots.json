@@ -1,0 +1,27 @@
+"{
+    {
+        name: 'lot1',
+        description: 'some lot1',
+        price: randomInteger(5000, 10000), 
+        step: randomInteger(50, 1000), 
+        seconds: randomInteger(20, 45),
+        image: 'https://clipart-db.ru/file_content/rastr/volkswagen_017.png'
+    },
+
+    {
+        name: 'lot2',
+        description: 'something lot2',
+        price: randomInteger(1, 100), 
+        step: randomInteger(1, 10), 
+        seconds: randomInteger(15, 25),
+        image: 'https://clipart-db.ru/file_content/rastr/volkswagen_017.png'
+    },
+    {
+        name: 'lot3',
+        description: 'some lot',
+        price: randomInteger(500, 10000), 
+        step: randomInteger(500, 600), 
+        seconds: randomInteger(5, 15),
+        image: 'https://clipart-db.ru/file_content/rastr/volkswagen_017.png'
+    }
+}"

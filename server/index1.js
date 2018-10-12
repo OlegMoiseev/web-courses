@@ -29,64 +29,80 @@ server.use(
 });
 
 function startTimer() {
-
-    var seconds = lot.seconds;
-    if (seconds === 0) {
+    if (lotTimeSec === 0) {
         // SEND "Time left!"
         // Disable buttons, etc.
+        if (currentLotNum < 2){
         currentLotNum = currentLotNum + 1;
+        } else {
+            currentLotNum = 0;
+        }
+       
         nextLot();
     }
     else {
-        lot.seconds = seconds - 1;
-        pusher.trigger('my-channel', 'time-update-event', seconds);
+        lotTimeSec -= 1;
+        pusher.trigger('my-channel', 'time-update-event', lotTimeSec);
         timerId = setTimeout(startTimer, 1000);
     }
 }
 
 
-
 var lots = [
     {
-        name: "lot1",
-        description: "some lot1",
+        name: "Volkswagen Golf",
+        description: "Good auto for good people :)",
         price: randomInteger(5000, 10000), 
-        step: 1.0, 
-        seconds: 10
+        step: randomInteger(50, 1000), 
+        seconds: randomInteger(20, 45),
+        image: "https://clipart-db.ru/file_content/rastr/volkswagen_017.png"
     },
 
     {
-        name: "lot2",
-        description: "something lot2",
-        price: randomInteger(1, 100), 
-        step: 10.0, 
-        seconds: randomInteger(15, 25)
+        name: "Six pink cats",
+        description: "Six pretty good PINK cats for all!!!",
+        price: randomInteger(100, 5000), 
+        step: randomInteger(1, 10), 
+        seconds: randomInteger(15, 25),
+        image: "https://avatanplus.com/files/resources/mid/59042ea406d8215bb85630bc.png"
     },
     {
-        name: "lot3",
-        description: "some lot",
-        price: randomInteger(500, 10000), 
-        step: 13.0, 
-        seconds: randomInteger(5, 15)
+        name: "Two cookies",
+        description: "Two great cookies with strong smell",
+        price: randomInteger(1, 10), 
+        step: randomInteger(1, 2), 
+        seconds: randomInteger(5, 15),
+        image: "http://pngimg.com/uploads/cookie/cookie_PNG13715.png"
     }
 ]
 
-server.get('/', function (req, res, next) {
-    console.log('/ was called');
+server.get('/getlot', function (req, res, next) {
+    console.log('/getlot was called');
     res.send(lot);
     return next();
 });
 
+server.post('/increase', function (req, res, next) {
+    console.log('/increase was called');
+    lot.price += lot.step;
+    pusher.trigger('my-channel', 'price-update-event', lot.price);
+    return next();
+});
+
+server.get('/*', restify.plugins.serveStatic({
+    directory: '/home/oleg/Documents/web-courses/auction',
+    default: 'main.html'
+}));
+
 var currentLotNum = 0;
 var lot = lots[currentLotNum];
-var currentPrice;
 var timerId = 0;
+var lotTimeSec = 0;
 
 function nextLot(){
     lot = lots[currentLotNum];
-    console.log("Called next lot:");
-    console.log(lot);
-    currentPrice = lot.price;
+    lotTimeSec = lot.seconds;
+    console.log("Called next lot");
     pusher.trigger('my-channel', 'get-lot-event', lot);
     clearTimeout(timerId);
 
